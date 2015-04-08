@@ -1,3 +1,14 @@
+// simplemouse.cpp
+// by Glenn G. Chappell
+// September 2003
+//
+// For CS 381
+// Simple Mouse Demo
+//
+// Draws a red box at the mouse position
+// whenever the left mouse button is down.
+
+/* Modified by Aryya Dwisatya W */
 #include <iostream>
 #include <windows.h>
 using std::string;

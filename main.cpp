@@ -42,18 +42,28 @@ void display(){
         }
     }
 }
-
+void printVector(vector<float> vectorPoint){
+    int i;
+    for(i=0;i<vectorPoint.size();i+=2){
+        cout << vectorPoint.at(i) << endl;
+        cout << vectorPoint.at(i+1) << endl;
+    }
+}
 void mouse(int button, int state, int x, int y){
     if(button == GLUT_LEFT_BUTTON){
         if(state == GLUT_DOWN){
-            cout << "L-X:" << x;
-            cout << "L-Y:" << y;
+            cout << "L-X:" << x << endl;
+            cout << "L-Y:" << y << endl;
+
+            vectorPoint.push_back(x);
+            vectorPoint.push_back(y);
         }
     }
     if(button ==GLUT_RIGHT_BUTTON){
         if(state == GLUT_DOWN){
-            cout << "R-X:" << x;
-            cout << "R-Y:" << y;
+            cout << "R-X:" << x << endl;
+            cout << "R-Y:" << y << endl;
+            printVector(vectorPoint);
         }
     }
 }

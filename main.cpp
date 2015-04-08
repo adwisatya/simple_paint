@@ -18,29 +18,23 @@ std::vector<float> vectorPoint;
 bool mouseleftdown = false;
 bool mouserightdown  = false;
 int mousex,mousey;
+int pointsize = 2;
 
-void display(){
+void display()
+{
+   if (mouseleftdown)
+   {
+      double oglx = double(mousex)/winw;
+      double ogly = 1-double(mousey)/winh;
 
-    if(mouseleftdown){
+      glColor3d(0.9, 0.1, 0.1);
+      glPointSize(pointsize);
+      glBegin(GL_POINTS);
+      glVertex2d(oglx, ogly);
+      glEnd();
+   }
 
-    }else if(mouserightdown){
-        switch(vectorPoint.size()){
-        case 2:
-            cout << "dua";
-            break;
-        case 4:
-            cout << "empat";
-            break;
-
-        case 6:
-            cout << "enam";
-            break;
-
-        case 8:
-            cout << "delapan";
-            break;
-        }
-    }
+   glutSwapBuffers();
 }
 void printVector(vector<float> vectorPoint){
     int i;
@@ -49,27 +43,73 @@ void printVector(vector<float> vectorPoint){
         cout << vectorPoint.at(i+1) << endl;
     }
 }
+
 void mouse(int button, int state, int x, int y){
     if(button == GLUT_LEFT_BUTTON){
+        mouseleftdown = (state == GLUT_DOWN);
+        glutPostRedisplay();
         if(state == GLUT_DOWN){
             cout << "L-X:" << x << endl;
             cout << "L-Y:" << y << endl;
-
             vectorPoint.push_back(x);
             vectorPoint.push_back(y);
         }
     }
-    if(button ==GLUT_RIGHT_BUTTON){
+    if(button == GLUT_RIGHT_BUTTON){
+        mouserightdown = (state == GLUT_DOWN);
+        glutPostRedisplay();
         if(state == GLUT_DOWN){
-            cout << "R-X:" << x << endl;
-            cout << "R-Y:" << y << endl;
-            printVector(vectorPoint);
+            cout << "Line history:" << endl;
+            for(int i=0;i<vectorPoint.size();i+=2){
+                cout << "X:" << vectorPoint[i] << "," << "Y:" << vectorPoint[i+1] << endl;
+            }
         }
     }
+    mousex = x;
+    mousey = y;
 }
 
+void motion(int x, int y)
+{
+   if (mouseleftdown){
+        cout << "L-X:" << x << endl;
+        cout << "L-Y:" << y << endl;
+        vectorPoint.push_back(x);
+        vectorPoint.push_back(y);
+        glutPostRedisplay();
+   }
+   mousex = x;
+   mousey = y;
+}
+void reshape(int w, int h)
+{
+   glViewport(0, 0, w, h);
+
+   winw = w;
+   winh = h;
+
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   gluOrtho2D(0.0, 1.0, 0.0, 1.0);
+
+   glMatrixMode(GL_MODELVIEW);  // Always go back to model/view mode
+}
+void keyboard(unsigned char key, int x, int y)
+{
+   switch (key)
+   {
+   case 'b':
+        pointsize += 1;
+        cout << "Pointsize: " << pointsize << endl;
+      break;
+   case 'l':
+        pointsize -=1;
+        cout << "Pointsize: " << pointsize << endl;
+    break;
+   }
+}
 void init(){
-    glClearColor(1.0,1.0,1.0,1.0);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 }
 int main(int argc, char ** argv){
 
@@ -80,10 +120,15 @@ int main(int argc, char ** argv){
     glutInitWindowPosition(0,0);
     glutCreateWindow("Pempek Simple Polygons Drawer");
 
+
     /* Init */
     init();
     glutDisplayFunc(display);
     glutMouseFunc(mouse);
+    glutReshapeFunc(reshape);
+    glutMotionFunc(motion);
+    glutKeyboardFunc(keyboard);
+
     /* Looping */
     glutMainLoop();
     return 0;
